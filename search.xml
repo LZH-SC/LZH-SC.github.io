@@ -4,7 +4,8 @@
     <title>Java Object类</title>
     <url>/2020/06/25/Java-Object%E7%B1%BB/</url>
     <content><![CDATA[<h1 id="Object类源码"><a href="#Object类源码" class="headerlink" title="Object类源码"></a>Object类源码</h1><h2 id="getClass-方法"><a href="#getClass-方法" class="headerlink" title="getClass 方法"></a>getClass 方法</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> Class&lt;?&gt; getClass();</span><br></pre></td></tr></table></figure>
-<p>&emsp;这个方法是 Native 方法，返回的是一个对象的实际类型，返回的type是Class\&lt;? extends |X|>，例如，如下代码输出的结果是 Integer。</p>
+<p>&emsp;这个方法是 Native 方法，返回的是一个对象的实际类型，返回的type是Class&lt;? extends |X|&gt;，例如，如下代码输出的结果是 Integer。</p>
+<a id="more"></a>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Number n = <span class="number">0</span>;</span><br><span class="line">System.out.println(n.getClass());</span><br></pre></td></tr></table></figure>
 <h2 id="hashCode方法"><a href="#hashCode方法" class="headerlink" title="hashCode方法"></a>hashCode方法</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
 <p>&emsp;在Object类的文档中，对 hashCode() 方法做了详细的要求：</p>
@@ -45,9 +46,9 @@
     <title>Java垃圾收集机制</title>
     <url>/2020/06/25/Java%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<h1 id="判断对象是否可回收"><a href="#判断对象是否可回收" class="headerlink" title="判断对象是否可回收"></a>判断对象是否可回收</h1><p>&emsp;判断一个对象是否可以被回收，即还有没有其它指针指向它，如果没有了，说明这个对象已经不可以再被使用到了，就可以回收掉它的内存空间。主要有两种方式可以判断：</p>
+<a id="more"></a>
 <p>&emsp;- 引用计数法：每当有一个引用引用到对象，就给对象的引用计数加一，这样当某个对象的引用计数为0时，就说明该对象已经可以被回收了，但是该方法有循环引用的问题。</p>
 <p>&emsp;- 可达性分析算法：以GC Roots对象为起点开始搜索引用链，凡是能搜索到的对象都是存活的对象，未能搜索到的对象都是可回收的对象。</p>
-<a id="more"></a>
 <p>&emsp;Java虚拟机中多使用可达性分析算法，其中GC Roots对象有4类：</p>
 <ul>
 <li>方法区中的常量引用的对象。</li>
@@ -114,13 +115,13 @@
     <title>Java类加载机制</title>
     <url>/2020/06/25/Java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<h1 id="类生命周期"><a href="#类生命周期" class="headerlink" title="类生命周期"></a>类生命周期</h1><p>&emsp;在Java 虚拟机中，类的生命周期包括7个阶段：加载 -&gt; 验证 -&gt; 准备 -&gt; 解析 -&gt; 初始化 -&gt; 使用 -&gt; 卸载。</p>
+<a id="more"></a>
 <h2 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h2><p>&emsp;类的加载过程主要完成3件事：</p>
 <ol>
 <li>通过类的全限定名获取该类的二进制字节流，这个过程并没有规定从哪里获取，具有很大的操作空间。</li>
 <li>将字节流的静态存储结构转为方法区或元空间的动态存储结构。</li>
 <li>生成这个类的Class对象，作为该类各种数据的访问入口。</li>
 </ol>
-<a id="more"></a>
 <h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>&emsp;确保字节流中包含的信息符合虚拟机的要求，不会危害到虚拟机。主要包括文件格式验证，验证是否以魔数开头，版本号是否被虚拟机接收；元数据验证，验证类的方法，字段是否与父类矛盾；字节码验证，通过数据流与控制流分析，确定程序语义，不会危害虚拟机。</p>
 <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>&emsp;为类变量分配内存并设置默认零值，类变量是指 static 修饰的变量，如果类变量是常量，会初始化为定义的值。</p>
 <h2 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h2><p>&emsp;将能替换的符号引用替换为直接引用，为了支持多态，有的符号引用在这个阶段不能被替换掉。</p>
@@ -167,9 +168,9 @@
   <entry>
     <title>背包问题</title>
     <url>/2020/06/24/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<h1 id="部分背包问题"><a href="#部分背包问题" class="headerlink" title="部分背包问题"></a>部分背包问题</h1><p>&emsp;部分背包问题即装入背包的物品可分割，可以用简单的贪心算法解决，物品平均价值由高到低排序，依次放入背包，直到放不下。</p>
+    <content><![CDATA[<h1 id="部分背包问题"><a href="#部分背包问题" class="headerlink" title="部分背包问题"></a>部分背包问题</h1><p>&emsp;部分背包问题即装入背包的物品可分割，可以用简单的贪心算法解决，物品平均价值由高到低排序，依次放入背包，直到放不下。<br><a id="more"></a></p>
 <p>&emsp;例如：有一堆金粉，银粉，铜粉和铁粉，用一个固定大小的袋子去装，只要从平均价值最大的金粉开始装，装完后装下一堆平均价值最大的物品，直到袋子装满为止即可。</p>
-<h1 id="01背包问题"><a href="#01背包问题" class="headerlink" title="01背包问题"></a>01背包问题</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>&emsp;有N件物品，第 i 件物品重Ci，价值Wi，你有一个能装重量V的背包，每件物品只有一个，你需要装入哪些物品才能使背包内的价值总和最大？<br><a id="more"></a></p>
+<h1 id="01背包问题"><a href="#01背包问题" class="headerlink" title="01背包问题"></a>01背包问题</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>&emsp;有N件物品，第 i 件物品重Ci，价值Wi，你有一个能装重量V的背包，每件物品只有一个，你需要装入哪些物品才能使背包内的价值总和最大？</p>
 <h2 id="动态规划公式"><a href="#动态规划公式" class="headerlink" title="动态规划公式"></a>动态规划公式</h2><p>&emsp;定义dp[i, v]表示将前 i 件物品放入容量为 v 的背包可以获得最大价值总和，那么在这个情况下，有两种可能，要么第 i 件物品放入了背包内， 要么第 i 件物品没有放入背包内。</p>
 <p>&emsp;如果第 i 件物品没有放入背包内，相当于<strong>dp[i, v] = dp[i - 1, v]</strong>，即将前面 i - 1件物品放入容量为v的背包中的最大价值总和。</p>
 <p>&emsp;如果第 i 件物品放入了背包内，相当于<strong>dp[i, v] = dp[i - 1, v - Ci] + Wi</strong>，因为第 i 件物品放入了背包，所以相当于前面 i - 1 件物品占用v - Ci的空间的最大价值总和再加上第 i 件物品的价值。</p>
