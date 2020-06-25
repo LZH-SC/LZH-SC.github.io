@@ -43,7 +43,7 @@
 <p>&emsp;扩展类加载器负责加载指定扩展目录下的类库。</p>
 <p>&emsp;应用程序类加载器，也叫系统类加载器，根据程序的类路径加载Java类，是程序默认的类加载器。用户自定义的加载器默认父加载器是应用程序类加载器。</p>
 <h2 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="双亲委派模型"></a>双亲委派模型</h2><p>&emsp;双亲委派模型要求除了顶层的启动类加载器外，所有加载器都有父类加载器，在收到类加载请求时，优先将请求委派给父加载器，父加载器无法处理时，子加载器才会自己加载类。这样做的好处是Java类随着它的类加载器具备一种天然的优先级层次。</p>
-<h2 id="线程上下文类加载器"><a href="#线程上下文类加载器" class="headerlink" title="线程上下文类加载器"></a>线程上下文类加载器</h2><p>&emsp;线程上下文类加载器能打破双亲委派模型的桎梏，在一些场景十分有用，比如web服务器。</p>
+<h2 id="线程上下文类加载器"><a href="#线程上下文类加载器" class="headerlink" title="线程上下文类加载器"></a>线程上下文类加载器</h2><p>&emsp;线程上下文类加载器能打破双亲委派模型的桎梏，在一些场景十分有用，比如web服务器。通过Thread.currentThread.setContextClassLoader() 与 Thread.currentThread.getContextClassLoader() 使用线程上下文类加载器。</p>
 ]]></content>
       <categories>
         <category>Java虚拟机</category>
