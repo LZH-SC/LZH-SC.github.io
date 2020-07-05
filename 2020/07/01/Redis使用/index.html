@@ -28,7 +28,7 @@
 <meta property="og:description" content="Redis&amp;emsp;Redis 是广泛应用的一个 NoSQL 数据库，基于 C 开发的键值对存储数据库，Redis一般用作缓存。但实际上 Redis 除了缓存之外，还有许多更加丰富的使用场景。比如 分布式锁，限流等。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-07-01T09:56:01.000Z">
-<meta property="article:modified_time" content="2020-07-03T09:29:57.544Z">
+<meta property="article:modified_time" content="2020-07-05T13:00:03.186Z">
 <meta property="article:author" content="书成">
 <meta property="article:tag" content="Redis">
 <meta property="article:tag" content="Jedis">
@@ -227,7 +227,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-03 17:29:57" itemprop="dateModified" datetime="2020-07-03T17:29:57+08:00">2020-07-03</time>
+                <time title="修改时间：2020-07-05 21:00:03" itemprop="dateModified" datetime="2020-07-05T21:00:03+08:00">2020-07-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -287,7 +287,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	JedisPool pool = MyJedis.getJedisPool();</span><br><span class="line">	<span class="keyword">try</span>(Jedis jedis = pool.getResource())&#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5000</span>; i++)</span><br><span class="line">			jedis.pfadd(<span class="string">"count"</span>, <span class="string">"test"</span> + i);</span><br><span class="line">		System.out.println(jedis.pfcount(<span class="string">"count"</span>));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h1><p>&emsp;布隆过滤器相当于是一个不太精确的 set 集合，我们可以利用它里边的 contains 方法去判断某一个对象是否存在，但是这个判断不是特别精确。一般来说，通过 contains 判断某个值不存在， 那就一定不存在，但是判断某个值存在的话，则他可能不存在 。   </p>
 <p>&emsp;布隆过滤器需要一个巨大的位数组和几个 hash 函数，它的 add 操作相当于对元素分别求出几个 hash 值，将位数组上 hash 值对应的位置设置为1即可。判断一个元素是否存在时，求出这个元素的几个 hash 值，如果它们对应的位都是1，表示这个元素存在，否则，这个元素不存在。因此布隆过滤器可能存在误判，一般位数组越大，误判率越小，占用空间越大。</p>
-<h1 id="Redis限流"><a href="#Redis限流" class="headerlink" title="Redis限流"></a>Redis限流</h1><p>&emsp;Redis也可以利用 zset 数据结构作限流，key 与请求有关，分数保存为请求的时间戳，这样，利用 zrangeByScore 可以求出某一段时间内的请求数量，当某个时间段内的请求数量达到一定数量，就拒绝其它访问。能够保证每 N 秒至多有 M 个访问能通过。</p>
+<h1 id="Redis限流"><a href="#Redis限流" class="headerlink" title="Redis限流"></a>Redis限流</h1><p>&emsp;Redis也可以利用 zset 数据结构作限流，<strong>key 与请求有关，分数保存为请求的时间戳，这样，利用 zrangeByScore 可以求出某一段时间内的请求数量</strong>，当某个时间段内的请求数量达到一定数量，就拒绝其它访问。能够保证每 N 秒至多有 M 个访问能通过。</p>
 <h1 id="GeoHash"><a href="#GeoHash" class="headerlink" title="GeoHash"></a>GeoHash</h1><p>&emsp;GeoHash是一种地址编码方式，将二维空间的经纬度编码为一个字符串。它表示的是<strong>一块区域</strong>而不是一个特定的点。例如某地经纬度为(40，116)</p>
 <ol>
 <li><p>纬度的范围在 (-90,90) 之间，中间值为 0，对于 39.9053908600 值落在 (0,90),因此得到的值为 1 </p>
