@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"liuzhenhui.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":5,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Spring Boot 整合 RedisSpring Boot 整合 Redis 十分方便，引入 redis 依赖自后配置 Redis 相关参数即可：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot整合Redis">
+<meta property="og:url" content="http://liuzhenhui.top/2020/07/19/SpringBoot%E6%95%B4%E5%90%88Redis/index.html">
+<meta property="og:site_name" content="书成">
+<meta property="og:description" content="Spring Boot 整合 RedisSpring Boot 整合 Redis 十分方便，引入 redis 依赖自后配置 Redis 相关参数即可：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/LZH-SC/blogImages/master/img/20200720002210.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/LZH-SC/blogImages/master/img/20200720002909.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/LZH-SC/blogImages/master/img/20200720003237.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/LZH-SC/blogImages/master/img/20200720004804.png">
+<meta property="article:published_time" content="2020-07-19T09:17:21.000Z">
+<meta property="article:modified_time" content="2020-07-19T16:52:29.148Z">
+<meta property="article:author" content="书成">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/LZH-SC/blogImages/master/img/20200720002210.png">
+
+<link rel="canonical" href="http://liuzhenhui.top/2020/07/19/SpringBoot%E6%95%B4%E5%90%88Redis/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>SpringBoot整合Redis | 书成</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">书成</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">再这样堕落下去就给我去死啊你这混蛋！！！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://liuzhenhui.top/2020/07/19/SpringBoot%E6%95%B4%E5%90%88Redis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="书成">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="书成">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SpringBoot整合Redis
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-19 17:17:21" itemprop="dateCreated datePublished" datetime="2020-07-19T17:17:21+08:00">2020-07-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-20 00:52:29" itemprop="dateModified" datetime="2020-07-20T00:52:29+08:00">2020-07-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringBoot/" itemprop="url" rel="index"><span itemprop="name">SpringBoot</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Spring-Boot-整合-Redis"><a href="#Spring-Boot-整合-Redis" class="headerlink" title="Spring Boot 整合 Redis"></a>Spring Boot 整合 Redis</h1><p>Spring Boot 整合 Redis 十分方便，引入 redis 依赖自后配置 Redis 相关参数即可：</p>
+<a id="more"></a>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>默认的 Redis 连接驱动是 Lettuce，Lettuce 是基于 NIO 编写的，性能与效果相比较 Jedis 更优秀。</p>
+<p><strong>Spring 根据配置生成一个 RedisConnectionFactory 接口实现类，通过它可以生成一个 RedisConnection 接口对象来对 Redis 进行操作</strong>。</p>
+<p><strong>为了更进一步简化开发流程，Spring 提供了 RedisTemplate 类，它会自动从 RedisConnectionFactory 中获取连接，然后执行 Redis 命令，之后自动关闭 Redis 连接</strong>。</p>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>创建一个 Spring Boot 项目，引入 Redis 依赖后在配置文件中配置 Redis 相关信息：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.redis.host</span>=<span class="string">127.0.0.1</span></span><br><span class="line"><span class="meta">spring.redis.database</span>=<span class="string">0</span></span><br><span class="line"><span class="meta">spring.redis.port</span>=<span class="string">6379</span></span><br><span class="line"><span class="meta">spring.redis.password</span>=<span class="string">123456</span></span><br></pre></td></tr></table></figure>
+<p>然后新建一个 HelloController 内容如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloController</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    StringRedisTemplate stringRedisTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/set"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">()</span></span>&#123;</span><br><span class="line">        ValueOperations&lt;String, String&gt; ops = stringRedisTemplate.opsForValue();</span><br><span class="line">        ops.set(<span class="string">"name"</span>, <span class="string">"helloRedis"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/get"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">get</span><span class="params">()</span></span>&#123;</span><br><span class="line">        ValueOperations&lt;String, String&gt; ops = stringRedisTemplate.opsForValue();</span><br><span class="line">        System.out.println(ops.get(<span class="string">"name"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>启动项目后可以访问对应 url 测试 Redis 是否成功应用。</p>
+<p><strong>上面代码中的 StringRedisTemplate 是 RedisTemplate 的子类，因为 RedisTemplate 默认序列化器是 JdkSerializationRedisSerializer，存入的是类对象序列化后的二进制字符串，使用体验很不好。 StringRedisTemplate 使用了 StringRedisSerializer 序列化器，这样能将数据从二进制字符串编码为简单字符串。但是 StringRedisTemplate 只提供了字符串序列化操作，对于复杂的 Java 对象需要自己实现 RedisSerializer 接口处理</strong>。</p>
+<p>StringRedisTemplate 部分源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringRedisTemplate</span> <span class="keyword">extends</span> <span class="title">RedisTemplate</span>&lt;<span class="title">String</span>, <span class="title">String</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">StringRedisTemplate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 设置键序列化器</span></span><br><span class="line">        <span class="keyword">this</span>.setKeySerializer(RedisSerializer.string());</span><br><span class="line">        <span class="comment">// 设置值序列化器</span></span><br><span class="line">        <span class="keyword">this</span>.setValueSerializer(RedisSerializer.string());</span><br><span class="line">        <span class="comment">// 设置散列结构的键序列化器</span></span><br><span class="line">        <span class="keyword">this</span>.setHashKeySerializer(RedisSerializer.string());</span><br><span class="line">        <span class="comment">// 设置散列结构的值序列化器</span></span><br><span class="line">        <span class="keyword">this</span>.setHashValueSerializer(RedisSerializer.string());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Spring封装的数据类型操作"><a href="#Spring封装的数据类型操作" class="headerlink" title="Spring封装的数据类型操作"></a>Spring封装的数据类型操作</h2><p>Redis 支持7种数据类型，Spring 针对每一种都提供了操作接口：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>获取接口</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GeoOperations</td>
+<td>redisTemplate.opsForGeo()</td>
+<td>地理位置数据类型操作</td>
+</tr>
+<tr>
+<td>HashOperations</td>
+<td>redisTemplate.opsForHash()</td>
+<td>散列数据类型操作</td>
+</tr>
+<tr>
+<td>HyperLogLogOperations</td>
+<td>redisTemplate.opsForHyperLogLog()</td>
+<td>基数操作</td>
+</tr>
+<tr>
+<td>ListOperations</td>
+<td>redisTemplate.opsForList()</td>
+<td>列表数据类型操作</td>
+</tr>
+<tr>
+<td>SetOperations</td>
+<td>redisTemplate.opsForSet()</td>
+<td>集合数据类型操作</td>
+</tr>
+<tr>
+<td>ZSetOperations</td>
+<td>redisTemplate.opsForZSet()</td>
+<td>有序集合数据类型操作</td>
+</tr>
+<tr>
+<td>ValuerOperations</td>
+<td>redisTemplate.opsForValue()</td>
+<td>字符串数据类型操作</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>在之前的例子中，使用了字符串数据类型的操作，如果需要操作其它数据类型，通过 API 获得相应接口即可。</p>
+<h2 id="Spring-Cache-整合-Redis"><a href="#Spring-Cache-整合-Redis" class="headerlink" title="Spring Cache 整合 Redis"></a>Spring Cache 整合 Redis</h2><p>Spring 提供了缓存注解，进一步简化 Redis 的使用。</p>
+<p>Spring 支持多种缓存的使用，提供了 CacheManager 接口与之相关的类，当使用 Redis 作为缓存时，主要使用 RedisCacheManager 管理缓存。</p>
+<p>在配置文件中加入缓存配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 缓存名字</span></span><br><span class="line"><span class="meta">spring.cache.cache-names</span>=<span class="string">testCache</span></span><br><span class="line"><span class="comment"># 是否允许缓存空值</span></span><br><span class="line"><span class="meta">spring.cache.redis.cache-null-values</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"># 缓存key的前缀</span></span><br><span class="line"><span class="meta">spring.cache.redis.key-prefix</span>= <span class="string">keyPrefixTest</span></span><br><span class="line"><span class="comment"># 缓存超时时间戳，设置为0则永不过期，单位毫秒</span></span><br><span class="line"><span class="meta">spring.cache.redis.time-to-live</span>=<span class="string">60000</span></span><br><span class="line"><span class="comment"># 默认情况下会自动探测</span></span><br><span class="line"><span class="meta">spring.cache.type</span>=<span class="string">redis</span></span><br></pre></td></tr></table></figure>
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>在启动文件上加入注解<code>@EnableCaching</code>，之后新建一个 User 类如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    String name;</span><br><span class="line">    <span class="keyword">int</span> id;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"User&#123;"</span> +</span><br><span class="line">                <span class="string">"name='"</span> + name + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">", id="</span> + id +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后新建一个 UserService 如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="comment">// 配置文件中配置的cacheNames</span></span><br><span class="line"><span class="meta">@CacheConfig</span>(cacheNames = <span class="string">"testCache"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Cacheable</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">getUserById</span><span class="params">(<span class="keyword">int</span> id)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;插入方法调用"</span>);</span><br><span class="line">        User user = <span class="keyword">new</span> User();</span><br><span class="line">        user.setId(id);</span><br><span class="line">        <span class="keyword">return</span> user;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@CacheEvict</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteUserById</span><span class="params">(<span class="keyword">int</span> id)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;删除方法调用"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@CachePut</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">updateUser</span><span class="params">(User user)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;更新方法调用"</span>);</span><br><span class="line">        <span class="keyword">return</span> user;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在单元测试中测试 getUserById 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RedisdemoApplicationTests</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    UserService userService;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">contextLoads</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        userService.getUserById(<span class="number">1</span>);</span><br><span class="line">        userService.getUserById(<span class="number">1</span>);</span><br><span class="line">        userService.getUserById(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果显示只调用了一次 getUserById 方法，在 Redis 中查找存入的缓存结果：</p>
+<p><img src="https://raw.githubusercontent.com/LZH-SC/blogImages/master/img/20200720002210.png" alt=""></p>
+<p>从缓存结果可以看出，查询结果确实被放入缓存了，缓存名字冒号前面是配置文件中配置的前缀和 cacheNames 的拼接，冒号后面是参数的值(默认，可修改)。</p>
+<p>接着测试 deleteUserById 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">testDelete</span><span class="params">()</span></span>&#123;</span><br><span class="line">        userService.deleteUserById(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>运行测试后可以查看 Redis 中缓存是否被删除。接着测试 updateUser 方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">testUpdate</span><span class="params">()</span></span>&#123;</span><br><span class="line">        User user = <span class="keyword">new</span> User();</span><br><span class="line">        user.setId(<span class="number">1</span>);</span><br><span class="line">        userService.updateUser(user);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>方法运行后查看 Redis 缓存如下：</p>
+<p><img src="https://raw.githubusercontent.com/LZH-SC/blogImages/master/img/20200720002909.png" alt=""></p>
+<p>发现结果与预想有出入，更新的缓存应该与查找的缓存名字一样，对 updateUser 方法做如下修改：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 表示取参数 user 的 id 属性做缓存名字</span></span><br><span class="line"><span class="meta">@CachePut</span>(key = <span class="string">"#user.id"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">updateUser</span><span class="params">(User user)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;更新方法调用"</span>);</span><br><span class="line">        <span class="keyword">return</span> user;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>修改之后再次运行单元测试后查看缓存结果便正确了：</p>
+<p><img src="https://raw.githubusercontent.com/LZH-SC/blogImages/master/img/20200720003237.png" alt=""></p>
+<h3 id="自定义-KeyGenerator"><a href="#自定义-KeyGenerator" class="headerlink" title="自定义 KeyGenerator"></a>自定义 KeyGenerator</h3><p>新建一个 MyKeyGenerator 类如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyKeyGenerator</span> <span class="keyword">implements</span> <span class="title">KeyGenerator</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">generate</span><span class="params">(Object o, Method method, Object... objects)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> method.getName();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>修改 UserService 类如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="comment">// 引入自定义的 KeyGenerator</span></span><br><span class="line"><span class="meta">@CacheConfig</span>(cacheNames = <span class="string">"testCache"</span>,keyGenerator = <span class="string">"myKeyGenerator"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserService</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 省略其它代码...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>之后重新在单元测试中测试 getUserById 方法后，查看 Redis 中的内容如下，可以发现缓存的 key 已经按照自定义的设置生成了。</p>
+<p><img src="https://raw.githubusercontent.com/LZH-SC/blogImages/master/img/20200720004804.png" alt=""></p>
+<h3 id="缓存注解总结"><a href="#缓存注解总结" class="headerlink" title="缓存注解总结"></a>缓存注解总结</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>注解</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>@EnableCaching</td>
+<td>开启缓存注解</td>
+</tr>
+<tr>
+<td>@CacheConfig</td>
+<td>可以配置cacheNames，keyGenerator，cacheManager，cacheResolver</td>
+</tr>
+<tr>
+<td>@Cacheable</td>
+<td>先从缓存中查询结果，查询不到再执行方法，然后将方法结果放入缓存</td>
+</tr>
+<tr>
+<td>@CachePut</td>
+<td>将方法返回值放入缓存</td>
+</tr>
+<tr>
+<td>@CacheEvict</td>
+<td>移除缓存</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring/" rel="tag"># Spring</a>
+              <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/19/SpringBoot%E6%95%B4%E5%90%88Mybatis/" rel="prev" title="SpringBoot整合Mybatis">
+      <i class="fa fa-chevron-left"></i> SpringBoot整合Mybatis
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-Boot-整合-Redis"><span class="nav-number">1.</span> <span class="nav-text">Spring Boot 整合 Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#示例"><span class="nav-number">1.1.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring封装的数据类型操作"><span class="nav-number">1.2.</span> <span class="nav-text">Spring封装的数据类型操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Cache-整合-Redis"><span class="nav-number">1.3.</span> <span class="nav-text">Spring Cache 整合 Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本使用"><span class="nav-number">1.3.1.</span> <span class="nav-text">基本使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义-KeyGenerator"><span class="nav-number">1.3.2.</span> <span class="nav-text">自定义 KeyGenerator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存注解总结"><span class="nav-number">1.3.3.</span> <span class="nav-text">缓存注解总结</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="书成"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">书成</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/LZH-SC" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;LZH-SC" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2515985723@qq.com" title="E-Mail → mailto:2515985723@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">书成</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
