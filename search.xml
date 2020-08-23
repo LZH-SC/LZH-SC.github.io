@@ -1441,7 +1441,7 @@
   <entry>
     <title>计算机网络总结</title>
     <url>/2020/08/23/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<h1 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a>计算机网络</h1><h2 id="5层协议"><a href="#5层协议" class="headerlink" title="5层协议"></a>5层协议</h2><p>5层协议自下而上分别是：</p>
+    <content><![CDATA[<h1 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a>计算机网络</h1><h2 id="5层协议"><a href="#5层协议" class="headerlink" title="5层协议"></a>5层协议</h2><p>5层协议自下而上分别是：<br><a id="more"></a></p>
 <ul>
 <li>物理层：实现相邻计算机节点之间<strong>比特流</strong>的传送，京可能屏蔽传输介质和物理设备的差异。</li>
 <li>数据链路层：将网络层交下来的 IP 数据报组装成帧传送。</li>
